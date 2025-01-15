@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from app.infrastructure.api.event_controller import router as event_router
+from app.infrastructure.api.attendee_controller import router as attendee_router
+from app.infrastructure.api.resource_controller import router as resource_router
 
 app = FastAPI(
     title="API de Mis Eventos",
@@ -11,8 +13,9 @@ app = FastAPI(
     }]
 )
 
-# Registrar rutas
 app.include_router(event_router)
+app.include_router(attendee_router)
+app.include_router(resource_router)
 
 @app.get("/", summary="Página de inicio", description="Muestra un mensaje de bienvenida.")
 def read_root():
