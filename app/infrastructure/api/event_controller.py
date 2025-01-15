@@ -1,3 +1,4 @@
+from app.infrastructure.database.postgres_event_repository import PostgresEventRepository
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.services.event_service import EventService
 from app.core.domain.event import Event
@@ -6,8 +7,23 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
-@router.post("/events")
+@router.post(
+    "/events",
+    response_model=dict,
+    summary="Crear un nuevo evento",
+    description="Crea un nuevo evento con la información proporcionada.",
+    tags=["Eventos"]
+)
 def create_event(event: Event, db: Session = Depends(get_db)):
+    """
+    Crea un nuevo evento.
+
+    Parámetros:
+    - **event**: Un objeto `Event` con la información del evento.
+
+    Respuesta:
+    - Un mensaje de éxito si el evento se crea correctamente.
+    """
     try:
         repository = PostgresEventRepository(db)
         service = EventService(repository)
@@ -16,8 +32,23 @@ def create_event(event: Event, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/events/{event_id}")
+@router.get(
+    "/events/{event_id}",
+    response_model=Event,
+    summary="Obtener un evento por ID",
+    description="Obtiene la información de un evento específico utilizando su ID.",
+    tags=["Eventos"]
+)
 def get_event(event_id: str, db: Session = Depends(get_db)):
+    """
+    Obtiene un evento por su ID.
+
+    Parámetros:
+    - **event_id**: El ID del evento que se desea obtener.
+
+    Respuesta:
+    - Un objeto `Event` con la información del evento.
+    """
     try:
         repository = PostgresEventRepository(db)
         service = EventService(repository)
