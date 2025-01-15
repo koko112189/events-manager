@@ -1,0 +1,26 @@
+[project]
+name = "eventss-manager-library"
+version = "0.1.0"
+description = "manage dependency in project"
+authors = [
+    {name = "John Acevedo"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi (>=0.115.6,<0.116.0)",
+    "uvicorn (>=0.34.0,<0.35.0)",
+    "sqlmodel (>=0.0.22,<0.0.23)",
+    "sqlalchemy (>=2.0.37,<3.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "elasticsearch (>=8.17.0,<9.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+alembic = "^1.14.0"
+
