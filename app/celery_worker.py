@@ -1,6 +1,6 @@
 from datetime import timedelta
 from celery import Celery
-from app.config import settings
+from app.config.settings import settings
 
 celery = Celery(__name__, broker=settings.REDIS_URL, backend=settings.REDIS_URL)
 

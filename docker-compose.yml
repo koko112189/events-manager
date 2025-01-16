@@ -11,11 +11,15 @@ services:
       - elasticsearch
       - redis
     environment:
-      - DATABASE_URL=postgresql+psycopg2://user:password@db:5433/events_manager
+      - DATABASE_URL=postgresql+psycopg2://user:password@db:5432/events_manager
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - REDIS_URL=redis://redis:6379/0
       - SENDGRID_API_KEY=your_sendgrid_api_key
       - EMAIL_FROM=no-reply@miseventos.com
+      - SMTP_SERVER=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=your-email@example.com
+      - SMTP_PASSWORD=your-email-password
     volumes:
       - .:/app
 
@@ -51,10 +55,14 @@ services:
     depends_on:
       - redis
     environment:
-      - DATABASE_URL=postgresql://user:password@postgres/events_manager
+      - DATABASE_URL=postgresql+psycopg2://user:password@db:5432/events_manager
       - REDIS_URL=redis://redis:6379/0
       - SENDGRID_API_KEY=your_sendgrid_api_key
       - EMAIL_FROM=no-reply@events_manager.com
+      - SMTP_SERVER=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=your-email@example.com
+      - SMTP_PASSWORD=your-email-password
 
   celery_beat:
     build: .
@@ -64,7 +72,11 @@ services:
     depends_on:
       - redis
     environment:
-      - DATABASE_URL=postgresql://user:password@postgres/events_manager
+      - DATABASE_URL=postgresql+psycopg2://user:password@db:5432/events_manager
       - REDIS_URL=redis://redis:6379/0
       - SENDGRID_API_KEY=your_sendgrid_api_key
       - EMAIL_FROM=no-reply@events_manager.com
+      - SMTP_SERVER=smtp.gmail.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=your-email@example.com
+      - SMTP_PASSWORD=your-email-password

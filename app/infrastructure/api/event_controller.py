@@ -1,7 +1,8 @@
+from app.infrastructure.cache import event_cache
 from app.infrastructure.database.postgres_event_repository import PostgresEventRepository
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.services.event_service import EventService
-from app.core.domain.events import Event, EventCreate, EventResponse
+from app.core.domain.events import  EventCreate, EventRead
 from app.infrastructure.database.session import get_db
 from sqlalchemy.orm import Session
 from app.core.tasks.email_tasks import send_change_notification
@@ -15,7 +16,7 @@ router = APIRouter()
     description="Crea un nuevo evento con la información proporcionada.",
     tags=["Eventos"]
 )
-def create_event(event: Event, db: Session = Depends(get_db)):
+def create_event(event: EventCreate, db: Session = Depends(get_db)):
     """
     Crea un nuevo evento.
 
@@ -35,7 +36,7 @@ def create_event(event: Event, db: Session = Depends(get_db)):
 
 @router.get(
     "/events/{event_id}",
-    response_model=Event,
+    response_model=EventRead,
     summary="Obtener un evento por ID",
     description="Obtiene la información de un evento específico utilizando su ID.",
     tags=["Eventos"]
@@ -58,7 +59,7 @@ def get_event(event_id: str, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     
-@router.get("/events", response_model=list[EventResponse], summary="Listar todos los eventos", tags=["Eventos"])
+@router.get("/events", response_model=list[EventRead], summary="Listar todos los eventos", tags=["Eventos"])
 def list_events(db: Session = Depends(get_db)):
     """
     Lista todos los eventos.
@@ -67,6 +68,10 @@ def list_events(db: Session = Depends(get_db)):
     - Una lista de objetos `EventResponse` con la información de los eventos.
     """
     try:
+        # cached_events = event_cache.get_events()
+        # if cached_events:
+        #     return cached_events
+        
         repository = PostgresEventRepository(db)
         service = EventService(repository)
         events = service.list_events()
@@ -74,7 +79,7 @@ def list_events(db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.put("/events/{event_id}", response_model=EventResponse, summary="Actualizar un evento", tags=["Eventos"])
+@router.put("/events/{event_id}", response_model=EventRead, summary="Actualizar un evento", tags=["Eventos"])
 def update_event(event_id: str, event: EventCreate, db: Session = Depends(get_db)):
     """
     Actualiza un evento existente.

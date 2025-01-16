@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.core.domain.speaker import SpeakerCreate, Speaker
+from app.core.domain.speaker import  SpeakerCreate, SpeakerRead
 from app.core.services.speaker_service import SpeakerService
 from app.infrastructure.database.postgres_speaker_repository import PostgresSpeakerRepository
 from app.infrastructure.database.session import get_db
 
 router = APIRouter()
 
-@router.post("/speakers", response_model=Speaker, summary="Crear un nuevo ponente", tags=["Ponentes"])
+@router.post("/speakers", response_model=SpeakerCreate, summary="Crear un nuevo ponente", tags=["Ponentes"])
 def create_speaker(speaker: SpeakerCreate, db: Session = Depends(get_db)):
     try:
         repository = PostgresSpeakerRepository(db)
@@ -17,7 +17,7 @@ def create_speaker(speaker: SpeakerCreate, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/speakers/{speaker_id}", response_model=Speaker, summary="Obtener un ponente por ID", tags=["Ponentes"])
+@router.get("/speakers/{speaker_id}", response_model=SpeakerRead, summary="Obtener un ponente por ID", tags=["Ponentes"])
 def get_speaker(speaker_id: str, db: Session = Depends(get_db)):
     try:
         repository = PostgresSpeakerRepository(db)
@@ -27,7 +27,7 @@ def get_speaker(speaker_id: str, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.get("/events/{event_id}/speakers", response_model=list[Speaker], summary="Listar ponentes de un evento", tags=["Ponentes"])
+@router.get("/events/{event_id}/speakers", response_model=list[SpeakerRead], summary="Listar ponentes de un evento", tags=["Ponentes"])
 def list_speakers(event_id: str, db: Session = Depends(get_db)):
     try:
         repository = PostgresSpeakerRepository(db)
