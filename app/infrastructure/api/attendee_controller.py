@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.core.domain.attendee import AttendeeCreate, AttendeeResponse
+from app.core.domain.attendee import AttendeeCreate, AttendeeRead
 from app.core.services.attendee_service import AttendeeService
 from app.infrastructure.database.postgres_attendee_repository import PostgresAttendeeRepository
 from app.infrastructure.database.session import get_db
@@ -8,7 +8,7 @@ from app.core.tasks.email_tasks import send_confirmation_email
 
 router = APIRouter()
 
-@router.post("/attendees", response_model=AttendeeResponse, summary="Registrar un nuevo asistente", tags=["Asistentes"])
+@router.post("/attendees", response_model=AttendeeCreate, summary="Registrar un nuevo asistente", tags=["Asistentes"])
 def register_attendee(attendee: AttendeeCreate, db: Session = Depends(get_db)):
     """
     Registra un nuevo asistente.
@@ -28,7 +28,7 @@ def register_attendee(attendee: AttendeeCreate, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-@router.get("/attendees/{attendee_id}", response_model=AttendeeResponse, summary="Obtener un asistente por ID", tags=["Asistentes"])
+@router.get("/attendees/{attendee_id}", response_model=AttendeeRead, summary="Obtener un asistente por ID", tags=["Asistentes"])
 def get_attendee(attendee_id: str, db: Session = Depends(get_db)):
     """
     Obtiene un asistente por su ID.
@@ -47,7 +47,7 @@ def get_attendee(attendee_id: str, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     
-@router.get("/events/{event_id}/attendees", response_model=list[AttendeeResponse], summary="Listar asistentes de un evento", tags=["Asistentes"])
+@router.get("/events/{event_id}/attendees", response_model=list[AttendeeRead], summary="Listar asistentes de un evento", tags=["Asistentes"])
 def list_attendees(event_id: str, db: Session = Depends(get_db)):
     """
     Lista todos los asistentes de un evento.

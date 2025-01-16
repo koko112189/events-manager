@@ -1,56 +1,57 @@
+from sqlmodel import SQLModel, Field, Relationship
 from typing import List, Optional
-from sqlmodel import Relationship, SQLModel, Field
 from datetime import datetime
-from pydantic import BaseModel, Field
 
-class EventModel(SQLModel, table=True):
-    id: str = Field(primary_key=True)
+class Event(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True) 
     name: str
-    description: str
     date: datetime
-    location: str
+    sessions: List["Session"] = Relationship(back_populates="event")
+    resources: List["Resource"] = Relationship(back_populates="event")
+    attendees: List["Attendee"] = Relationship(back_populates="event")
 
-    attendees: List["AttendeeModel"] = Relationship(back_populates="event")
-    resources: List["ResourceModel"] = Relationship(back_populates="event")
-    sessions: list["SessionModel"] = Relationship(back_populates="event")
-    speakers: list["SpeakerModel"] = Relationship(back_populates="event")
+    class Config:
+        orm_mode = True
 
-class AttendeeModel(SQLModel, table=True):
-    id: str = Field(primary_key=True)
+class Session(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  
     name: str
-    email: str
-    event_id: str = Field(foreign_key="eventmodel.id")
+    event_id: Optional[int] = Field(default=None, foreign_key="event.id")
+    event: Optional[Event] = Relationship(back_populates="sessions")
+    speaker_id: Optional[int] = Field(default=None, foreign_key="speaker.id")
+    speaker: Optional["Speaker"] = Relationship(back_populates="sessions")
+    resources: List["Resource"] = Relationship(back_populates="session")
 
-    event: "EventModel" = Relationship(back_populates="attendees")
+    class Config:
+        orm_mode = True
 
-
-class ResourceModel(SQLModel, table=True):
-    id: str = Field(primary_key=True)
-    name: str
-    description: str
-    event_id: str = Field(foreign_key="eventmodel.id")
-
-    event: "EventModel" = Relationship(back_populates="resources")
-
-class SessionModel(SQLModel, table=True):
-    id: str = Field(primary_key=True)
-    name: str
-    description: str
-    start_time: datetime
-    end_time: datetime
-    event_id: str = Field(foreign_key="eventmodel.id")
-    speaker_id: Optional[str] = Field(default=None, foreign_key="speakermodel.id")
-    capacity: int
-
-    # Relaciones
-    event: "EventModel" = Relationship(back_populates="sessions")
-    speaker: Optional["SpeakerModel"] = Relationship(back_populates="sessions")
-
-class SpeakerModel(SQLModel, table=True):
-    id: str = Field(primary_key=True)
+class Speaker(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  
     name: str
     bio: str
-    event_id: str = Field(foreign_key="eventmodel.id")
-    # Relaciones
-    event: "EventModel" = Relationship(back_populates="speakers")
-    sessions: list["SessionModel"] = Relationship(back_populates="speaker")
+    sessions: List[Session] = Relationship(back_populates="speaker")
+
+    class Config:
+        orm_mode = True
+
+class Resource(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True) 
+    name: str
+    type: str  # Puede ser "file", "link", "material", etc.
+    event_id: Optional[int] = Field(default=None, foreign_key="event.id")
+    event: Optional[Event] = Relationship(back_populates="resources")
+    session_id: Optional[int] = Field(default=None, foreign_key="session.id")
+    session: Optional[Session] = Relationship(back_populates="resources")
+
+    class Config:
+        orm_mode = True
+
+class Attendee(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  
+    name: str
+    email: str
+    event_id: Optional[int] = Field(default=None, foreign_key="event.id")
+    event: Optional[Event] = Relationship(back_populates="attendees")
+
+    class Config:
+        orm_mode = True

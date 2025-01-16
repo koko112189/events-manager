@@ -1,14 +1,14 @@
 # app/infrastructure/api/resource_controller.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.core.domain.resource import ResourceCreate, ResourceResponse
+from app.core.domain.resource import ResourceCreate, ResourceRead
 from app.core.services.resource_service import ResourceService
 from app.infrastructure.database.postgres_resource_repository import PostgresResourceRepository
 from app.infrastructure.database.session import get_db
 
 router = APIRouter()
 
-@router.post("/resources", response_model=ResourceResponse, summary="Agregar un nuevo recurso", tags=["Recursos"])
+@router.post("/resources", response_model=ResourceCreate, summary="Agregar un nuevo recurso", tags=["Recursos"])
 def add_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
     """
     Agrega un nuevo recurso.
@@ -27,7 +27,7 @@ def add_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-@router.get("/events/{event_id}/resources", response_model=list[ResourceResponse], summary="Listar recursos de un evento", tags=["Recursos"])
+@router.get("/events/{event_id}/resources", response_model=list[ResourceRead], summary="Listar recursos de un evento", tags=["Recursos"])
 def list_resources(event_id: str, db: Session = Depends(get_db)):
     """
     Lista todos los recursos de un evento.
