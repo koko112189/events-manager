@@ -1,7 +1,7 @@
 import pytest
 from app.core.services.event_service import EventService
 from app.core.ports.event_repository import EventRepository
-from app.core.domain.event import Event
+from app.core.domain.events import Event
 from datetime import datetime
 
 class MockEventRepository(EventRepository):

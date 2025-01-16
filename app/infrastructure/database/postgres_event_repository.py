@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.core.ports.event_repository import EventRepository
-from app.core.domain.event import Event
+from app.core.domain.events import Event
 from app.infrastructure.database.models import EventModel  # Definiremos este modelo más adelante
 
 class PostgresEventRepository(EventRepository):

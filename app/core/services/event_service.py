@@ -1,9 +1,11 @@
 from app.core.ports.event_repository import EventRepository
-from app.core.domain.event import Event
+from app.core.domain.events import Event
+from app.infrastructure.cache.event_cache import EventCache
 
 class EventService:
-    def __init__(self, event_repository: EventRepository):
+    def __init__(self, event_repository: EventRepository, event_cache: EventCache):
         self.event_repository = event_repository
+        self.event_cache = event_cache
 
     def create_event(self, event: Event) -> None:
         self.event_repository.save(event)

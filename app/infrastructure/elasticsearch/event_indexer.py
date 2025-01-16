@@ -1,5 +1,5 @@
 from elasticsearch import AsyncElasticsearch
-from app.core.domain.event import Event
+from app.core.domain.events import Event
 from app.config import settings
 
 class ElasticsearchEventIndexer:

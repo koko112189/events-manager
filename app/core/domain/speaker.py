@@ -1,15 +1,18 @@
-from pydantic import BaseModel, Field
+from typing import List, Optional
+from sqlmodel import SQLModel, Field, Relationship
 
-class SpeakerBase(BaseModel):
-    name: str = Field(..., example="Juan Pérez")
-    bio: str = Field(..., example="Experto en desarrollo de APIs con FastAPI.")
-    event_id: str = Field(..., example="123e4567-e89b-12d3-a456-426614174000")
+class SpeakerBase(SQLModel):
+    name: str
+    bio: str
+    event_id: Optional[int] = Field(default=None, foreign_key="event.id")  # Clave foránea
 
 class SpeakerCreate(SpeakerBase):
     pass
 
-class Speaker(SpeakerBase):
-    id: str = Field(..., example="123e4567-e89b-12d3-a456-426614174000")
+class Speaker(SpeakerBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  # Clave primaria
+    event: Optional["Event"] = Relationship(back_populates="speakers")  # Relación con Event
+    sessions: List["Session"] = Relationship(back_populates="speaker")  # Relación con Session
 
-    class Config:
-        from_attributes = True  # Habilita la compatibilidad con ORM
+class SpeakerResponse(SpeakerBase):
+    id: int  # Clave primaria

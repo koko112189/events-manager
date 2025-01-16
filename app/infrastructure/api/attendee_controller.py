@@ -4,6 +4,7 @@ from app.core.domain.attendee import AttendeeCreate, AttendeeResponse
 from app.core.services.attendee_service import AttendeeService
 from app.infrastructure.database.postgres_attendee_repository import PostgresAttendeeRepository
 from app.infrastructure.database.session import get_db
+from app.core.tasks.email_tasks import send_confirmation_email
 
 router = APIRouter()
 
@@ -22,6 +23,7 @@ def register_attendee(attendee: AttendeeCreate, db: Session = Depends(get_db)):
         repository = PostgresAttendeeRepository(db)
         service = AttendeeService(repository)
         new_attendee = service.register_attendee(attendee)
+        send_confirmation_email.delay(new_attendee.email, new_attendee.event.name)
         return new_attendee
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
