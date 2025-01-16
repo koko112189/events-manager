@@ -1,24 +1,17 @@
-# app/core/domain/resource.py
-from pydantic import BaseModel, Field
+from typing import Optional
+from sqlmodel import SQLModel, Field, Relationship
 
-from app.core.domain.event import Event
-
-class ResourceBase(BaseModel):
-    name: str = Field(..., example="Sala de Conferencias A")
-    description: str = Field(..., example="Sala con capacidad para 100 personas.")
-    event_id: str = Field(..., example="123e4567-e89b-12d3-a456-426614174000")
+class ResourceBase(SQLModel):
+    name: str
+    description: str
+    event_id: Optional[int] = Field(default=None, foreign_key="event.id")  # Clave foránea
 
 class ResourceCreate(ResourceBase):
     pass
 
-class Resource(ResourceBase):
-    id: str = Field(..., example="123e4567-e89b-12d3-a456-426614174000")
+class Resource(ResourceBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  # Clave primaria
+    event: Optional["Event"] = Relationship(back_populates="resources")  # Relación con Event
 
-    class Config:
-        from_attributes = True  
-
-class ResourceResponse(Resource):
-    event: "Event"
-
-    class Config:
-        from_attributes = True
+class ResourceResponse(ResourceBase):
+    id: int  # Clave primaria

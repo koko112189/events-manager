@@ -1,11 +1,12 @@
 [project]
-name = "eventss-manager-library"
+name = "events-manager"
 version = "0.1.0"
 description = "manage dependency in project"
 authors = [
     {name = "John Acevedo"}
 ]
-readme = "README.md"
+package-mode = false 
+
 requires-python = ">=3.9"
 dependencies = [
     "fastapi (>=0.115.6,<0.116.0)",
@@ -15,8 +16,12 @@ dependencies = [
     "psycopg2-binary (>=2.9.10,<3.0.0)",
     "elasticsearch (>=8.17.0,<9.0.0)",
     "alembic (>=1.14.0,<2.0.0)",
-    "pydantic (>=2.10.5,<3.0.0)",
-    "pytest (>=8.3.4,<9.0.0)"
+    "pydantic[email] (>=2.10.5,<3.0.0)",
+    "pytest (>=8.3.4,<9.0.0)",
+    "redis (>=5.2.1,<6.0.0)",
+    "python-dotenv (>=1.0.1,<2.0.0)",
+    "celery (>=5.4.0,<6.0.0)",
+    "sendgrid (>=6.11.0,<7.0.0)"
 ]
 
 

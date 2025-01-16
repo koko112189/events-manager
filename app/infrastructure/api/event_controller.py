@@ -1,9 +1,10 @@
 from app.infrastructure.database.postgres_event_repository import PostgresEventRepository
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.services.event_service import EventService
-from app.core.domain.event import Event, EventCreate, EventResponse
+from app.core.domain.events import Event, EventCreate, EventResponse
 from app.infrastructure.database.session import get_db
 from sqlalchemy.orm import Session
+from app.core.tasks.email_tasks import send_change_notification
 
 router = APIRouter()
 
@@ -89,6 +90,10 @@ def update_event(event_id: str, event: EventCreate, db: Session = Depends(get_db
         repository = PostgresEventRepository(db)
         service = EventService(repository)
         updated_event = service.update_event(event_id, event)
+
+        changes = f"Nuevo nombre: {updated_event.name}, Nueva fecha: {updated_event.date}"
+        send_change_notification.delay(updated_event.attendees[0].email, updated_event.name, changes)
+
         return updated_event
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

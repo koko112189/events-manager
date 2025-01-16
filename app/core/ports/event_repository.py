@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from app.core.domain.event import Event
+from app.core.domain.events import Event
 
 class EventRepository(ABC):
     @abstractmethod
