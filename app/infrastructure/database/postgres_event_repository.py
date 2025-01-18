@@ -17,6 +17,7 @@ class PostgresEventRepository(EventRepository):
         return EventRead.from_orm(new_event)
 
     def find_by_id(self, event_id: int) -> EventRead:
+        
         event_model = self.session.query(EventModel).filter(EventModel.id == event_id).first()
         if event_model:
             return EventRead(**event_model.dict())

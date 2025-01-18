@@ -7,6 +7,6 @@ class SpeakerCreate(SQLModel):
     bio: str
 
 class SpeakerRead(SQLModel):
-    id: Optional[str]
+    id: Optional[int]
     name: str
     bio: str
