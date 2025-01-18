@@ -1,3 +1,4 @@
+import json
 import redis
 from app.core.domain.events import  EventCreate, EventRead
 from app.config import settings
@@ -16,8 +17,19 @@ class EventCache:
         return None
     
     def get_events(self) -> list[EventRead]:
-        events_data = self.client.keys("event:*")
-        return [EventRead.parse_raw(event_data) for event_data in events_data]
+        event_keys = self.client.keys("event:*")
+        
+        events = []
+        for key in event_keys:
+            event_data = self.client.get(key)  # Esto obtiene el valor (debería ser JSON)
+            if event_data:
+                try:
+                    event_dict = json.loads(event_data)
+                    event = EventRead.parse_obj(event_dict)  # Usa parse_obj para un diccionario
+                    events.append(event)
+                except json.JSONDecodeError as e:
+                    print(f"Error decodificando JSON para la clave {key}: {e}")
+        return events
     
     def set_events(self, events: list[EventRead]) -> None:
         for event in events:
