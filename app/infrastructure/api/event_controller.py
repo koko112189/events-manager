@@ -6,6 +6,7 @@ from app.core.domain.events import  EventCreate, EventRead
 from app.infrastructure.database.session import get_db
 from sqlalchemy.orm import Session
 from app.core.tasks.email_tasks import send_change_notification
+from app.infrastructure.elasticsearch.event_indexer import search_events
 
 router = APIRouter()
 
@@ -125,3 +126,11 @@ def delete_event(event_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/events/search/")
+async def search_events_endpoint(query: str):
+    try:
+        results = await search_events(query)
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))    

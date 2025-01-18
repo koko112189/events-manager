@@ -11,12 +11,13 @@ class PostgresAttendeeRepository(AttendeeRepository):
 
     def save(self, attendee: AttendeeCreate) -> AttendeeCreate:
         new_attendee = AttendeeModel(**attendee.dict())
-        self.session.add(attendee)
+        self.session.add(new_attendee)
         self.session.commit()
-        self.session.refresh(attendee)
+        self.session.refresh(new_attendee)
         return new_attendee
 
     def find_by_id(self, attendee_id: int) -> AttendeeRead:
+        
         attendee_model = self.session.query(AttendeeModel).filter(AttendeeModel.id == attendee_id).first()
         if attendee_model:
             return AttendeeRead.from_orm(attendee_model)

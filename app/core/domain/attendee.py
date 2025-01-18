@@ -5,9 +5,9 @@ from typing import Optional
 class AttendeeCreate(SQLModel):
     name: str
     email: str
-    event_id: Optional[str]
+    event_id: Optional[int]
 
 class AttendeeRead(SQLModel):
-    id: Optional[str]
+    id: Optional[int]
     name: str
     email: str

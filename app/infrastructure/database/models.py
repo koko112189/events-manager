@@ -16,6 +16,10 @@ class Event(SQLModel, table=True):
 class Session(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)  
     name: str
+    capacity: int
+    start_time: datetime
+    end_time: datetime
+    date: datetime
     event_id: Optional[int] = Field(default=None, foreign_key="event.id")
     event: Optional[Event] = Relationship(back_populates="sessions")
     speaker_id: Optional[int] = Field(default=None, foreign_key="speaker.id")

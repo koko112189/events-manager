@@ -9,13 +9,15 @@ class PostgresEventRepository(EventRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    def save(self, event: EventCreate) -> None:
-        self.session.add(event)
+    def save(self, event: EventCreate) -> EventRead:
+        new_event = EventModel(**event.dict())
+        self.session.add(new_event)
         self.session.commit()
-        self.session.refresh(event)
-        return EventCreate.from_orm(event)
+        self.session.refresh(new_event)
+        return EventRead.from_orm(new_event)
 
     def find_by_id(self, event_id: int) -> EventRead:
+        
         event_model = self.session.query(EventModel).filter(EventModel.id == event_id).first()
         if event_model:
             return EventRead(**event_model.dict())
