@@ -23,7 +23,7 @@ def register_attendee(attendee: AttendeeCreate, db: Session = Depends(get_db)):
         repository = PostgresAttendeeRepository(db)
         service = AttendeeService(repository)
         new_attendee = service.register_attendee(attendee)
-        send_confirmation_email.delay(new_attendee.email, new_attendee.event.name)
+        # send_confirmation_email.delay(new_attendee.email, new_attendee.event.name)
         return new_attendee
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

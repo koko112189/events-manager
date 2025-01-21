@@ -13,3 +13,7 @@ class EventRepository(ABC):
     @abstractmethod
     def list_events(self) -> list[EventRead]:
         pass
+
+    @abstractmethod
+    def update(self, event_id: int, event: EventCreate) -> EventRead:
+        pass

@@ -26,3 +26,13 @@ class PostgresEventRepository(EventRepository):
     def list_events(self) -> list[EventRead]:
         events = self.session.query(EventModel).all()
         return [EventRead(**event.dict()) for event in events]
+    
+    def update(self, event_id: int, event: EventCreate) -> EventRead:
+        event_model = self.session.query(EventModel).filter(EventModel.id == event_id).first()
+        if event_model:
+            event_model.name = event.name
+            event_model.date = event.date
+            self.session.commit()
+            self.session.refresh(event_model)
+            return EventRead(**event_model.dict())
+        raise ValueError("Event not found")

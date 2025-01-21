@@ -8,12 +8,12 @@ class PostgresSessionRepository(SessionRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    def save(self, session: SessionCreate) -> SessionRead:
+    def save(self, session: SessionCreate) -> SessionCreate:
         session_model = SessionModel(**session.dict())
         self.session.add(session_model)
         self.session.commit()
         self.session.refresh(session_model)
-        return SessionRead.from_orm(session_model)
+        return session_model
 
     def find_by_id(self, session_id: str) -> SessionRead:
         session_model = self.session.query(SessionModel).filter(SessionModel.id == session_id).first()

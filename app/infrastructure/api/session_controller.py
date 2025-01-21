@@ -4,17 +4,21 @@ from app.core.domain.session import  SessionCreate, SessionRead
 from app.core.services.session_service import SessionService
 from app.infrastructure.database.postgres_session_repository import PostgresSessionRepository
 from app.infrastructure.database.session import get_db
-
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
-@router.post("/sessions", response_model=SessionCreate, summary="Crear una nueva sesión", tags=["Sesiones"])
+@router.post("/sessions",  summary="Crear una nueva sesión", tags=["Sesiones"])
 def create_session(session: SessionCreate, db: Session = Depends(get_db)):
     try:
+        logger.debug("Creating session: %s", session)
         repository = PostgresSessionRepository(db)
         service = SessionService(repository)
-        new_session = service.create_session(session)
-        return new_session
+        service.create_session(session)
+        return {"message": "Session created successfully"}
     except ValueError as e:
+        logger.error("Error creating session: %s", str(e))
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/sessions/{session_id}", response_model=SessionRead, summary="Obtener una sesión por ID", tags=["Sesiones"])

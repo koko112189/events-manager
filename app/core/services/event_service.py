@@ -24,3 +24,8 @@ class EventService:
             return cached_events
         
         return self.event_repository.list_events()
+    
+    def update_event(self, event_id: int, event: EventCreate) -> EventRead:
+        updated_event = self.event_repository.update(event_id, event)
+        #self.event_cache.set_event(updated_event)
+        print ("Event updated")

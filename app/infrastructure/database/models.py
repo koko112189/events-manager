@@ -31,7 +31,7 @@ class Session(SQLModel, table=True):
 
 class Speaker(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)  
-    name: str
+    person_id: Optional[int] = Field(default=None, foreign_key="person.id")
     bio: str
     sessions: List[Session] = Relationship(back_populates="speaker")
 
@@ -52,10 +52,19 @@ class Resource(SQLModel, table=True):
 
 class Attendee(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)  
-    name: str
-    email: str
+    person_id: Optional[int] = Field(default=None, foreign_key="person.id")
     event_id: Optional[int] = Field(default=None, foreign_key="event.id")
     event: Optional[Event] = Relationship(back_populates="attendees")
+    sessions: List[Session] = Relationship(back_populates="attendees")
+    class Config:
+        orm_mode = True
+
+class Person(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)  
+    name: str
+    email: str
+    phone: str
+    registration_date: datetime
 
     class Config:
         orm_mode = True
