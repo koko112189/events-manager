@@ -16,12 +16,14 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - SENDGRID_API_KEY=your_sendgrid_api_key
       - EMAIL_FROM=no-reply@miseventos.com
-      - SMTP_SERVER=smtp.gmail.com
-      - SMTP_PORT=587
-      - SMTP_USERNAME=your-email@example.com
-      - SMTP_PASSWORD=your-email-password
+      - SMTP_SERVER=sandbox.smtp.mailtrap.io
+      - SMTP_PORT=2525
+      - SMTP_USERNAME=8d4efa6b068337
+      - SMTP_PASSWORD=e9a723fd05dcef
     volumes:
       - .:/app
+    networks:
+      - default
 
   db:
     image: postgres:15

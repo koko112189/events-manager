@@ -16,5 +16,9 @@ class SessionRepository(ABC):
         pass
 
     @abstractmethod
+    def count_attendees(self, session_id: int) -> int:
+        pass
+
+    @abstractmethod
     def is_time_slot_available(self, event_id: int, start_time: datetime, end_time: datetime) -> bool:
         pass

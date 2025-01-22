@@ -8,7 +8,7 @@ from app.infrastructure.database.session import get_db
 
 router = APIRouter()
 
-@router.post("/resources", response_model=ResourceCreate, summary="Agregar un nuevo recurso", tags=["Recursos"])
+@router.post("/resources", summary="Agregar un nuevo recurso", tags=["Recursos"])
 def add_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
     """
     Agrega un nuevo recurso.
@@ -23,11 +23,11 @@ def add_resource(resource: ResourceCreate, db: Session = Depends(get_db)):
         repository = PostgresResourceRepository(db)
         service = ResourceService(repository)
         new_resource = service.add_resource(resource)
-        return new_resource
+        return {"message": "Resource created successfully"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-@router.get("/events/{event_id}/resources", response_model=list[ResourceRead], summary="Listar recursos de un evento", tags=["Recursos"])
+@router.get("/events/{event_id}/resources", summary="Listar recursos de un evento", tags=["Recursos"])
 def list_resources(event_id: str, db: Session = Depends(get_db)):
     """
     Lista todos los recursos de un evento.

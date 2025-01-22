@@ -3,17 +3,18 @@ from sqlalchemy.orm import Session
 from app.core.domain.session import SessionRead, SessionCreate
 from app.core.ports.session_repository import SessionRepository
 from app.infrastructure.database.models import  Session as SessionModel
+from app.infrastructure.database.models import  Attendee as AttendeeModel
 
 class PostgresSessionRepository(SessionRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    def save(self, session: SessionCreate) -> SessionRead:
+    def save(self, session: SessionCreate) -> SessionCreate:
         session_model = SessionModel(**session.dict())
         self.session.add(session_model)
         self.session.commit()
         self.session.refresh(session_model)
-        return SessionRead.from_orm(session_model)
+        return session_model
 
     def find_by_id(self, session_id: str) -> SessionRead:
         session_model = self.session.query(SessionModel).filter(SessionModel.id == session_id).first()
@@ -25,10 +26,13 @@ class PostgresSessionRepository(SessionRepository):
         sessions = self.session.query(SessionModel).filter(SessionModel.event_id == event_id).all()
         return [SessionRead.from_orm(session) for session in sessions]
 
-    def is_time_slot_available(self, event_id: str, start_time: datetime, end_time: datetime) -> bool:
+    def is_time_slot_available(self, event_id: int, start_time: datetime, end_time: datetime) -> bool:
         conflicting_sessions = self.session.query(SessionModel).filter(
             SessionModel.event_id == event_id,
             SessionModel.start_time < end_time,
             SessionModel.end_time > start_time
         ).count()
         return conflicting_sessions == 0
+    
+    def count_attendees(self, session_id: str) -> int:
+        return self.session.query(AttendeeModel).filter(AttendeeModel.session_id == session_id).count()

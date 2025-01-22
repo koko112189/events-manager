@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.domain.attendee import AttendeeCreate, AttendeeRead
 from app.core.services.attendee_service import AttendeeService
+from app.core.services.session_service import SessionService
 from app.infrastructure.database.postgres_attendee_repository import PostgresAttendeeRepository
+from app.infrastructure.database.postgres_session_repository import PostgresSessionRepository
 from app.infrastructure.database.session import get_db
 from app.core.tasks.email_tasks import send_confirmation_email
 
@@ -21,9 +23,10 @@ def register_attendee(attendee: AttendeeCreate, db: Session = Depends(get_db)):
     """
     try:
         repository = PostgresAttendeeRepository(db)
-        service = AttendeeService(repository)
+        repository_session = PostgresSessionRepository(db)
+        service = AttendeeService(repository, repository_session)
         new_attendee = service.register_attendee(attendee)
-        send_confirmation_email.delay(new_attendee.email, new_attendee.event.name)
+        # send_confirmation_email.delay(new_attendee.email, new_attendee.event.name)
         return new_attendee
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -80,7 +80,7 @@ def list_events(db: Session = Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@router.put("/events/{event_id}", response_model=EventRead, summary="Actualizar un evento", tags=["Eventos"])
+@router.put("/events/{event_id}", summary="Actualizar un evento", tags=["Eventos"])
 def update_event(event_id: str, event: EventCreate, db: Session = Depends(get_db)):
     """
     Actualiza un evento existente.
@@ -97,9 +97,9 @@ def update_event(event_id: str, event: EventCreate, db: Session = Depends(get_db
         service = EventService(repository)
         updated_event = service.update_event(event_id, event)
 
-        changes = f"Nuevo nombre: {updated_event.name}, Nueva fecha: {updated_event.date}"
-        send_change_notification.delay(updated_event.attendees[0].email, updated_event.name, changes)
-
+        # changes = f"Nuevo nombre: {updated_event.name}, Nueva fecha: {updated_event.date}"
+        # send_change_notification.delay(updated_event.date, updated_event.name, changes)
+        return {"message": "Event updated successfully"}
         return updated_event
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
