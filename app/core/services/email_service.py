@@ -24,7 +24,7 @@ class EmailService:
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
                 server.login(self.username, self.password)
-                server.sendmail(self.username, to_email, content.as_string())
+                server.sendmail(self.username, to_email, message.as_string())
         except Exception as e:
             print(f"Error sending email: {e}")
             return None

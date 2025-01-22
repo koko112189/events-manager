@@ -4,7 +4,6 @@ from typing import Optional
 
 class ResourceCreate(SQLModel):
     name: str
-    description: str
     type: str
     event_id: Optional[int]
     session_id: Optional[int]
@@ -12,4 +11,4 @@ class ResourceCreate(SQLModel):
 class ResourceRead(SQLModel):
     id: Optional[int]
     name: str
-    description: str
+    type: str

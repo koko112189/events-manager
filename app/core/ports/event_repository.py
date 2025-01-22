@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from app.core.domain.events import  EventCreate, EventRead
 
 class EventRepository(ABC):
@@ -12,4 +13,8 @@ class EventRepository(ABC):
 
     @abstractmethod
     def list_events(self) -> list[EventRead]:
+        pass
+
+    @abstractmethod
+    def update(self, event_id: int, event: EventCreate) -> EventRead:
         pass
