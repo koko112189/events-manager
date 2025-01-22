@@ -11,13 +11,12 @@ class SessionService:
         self.session_repository = session_repository
 
     def create_session(self, session: SessionCreate) -> None:
-        # if not self.session_repository.is_time_slot_available(session.event_id, session.start_time, session.end_time):
-        #     raise ValueError("Time slot is not available")
+        if not self.session_repository.is_time_slot_available(session.event_id, session.start_time, session.end_time):
+            raise ValueError("Time slot is not available")
         logger.debug("Creating session: %s", session)
         self.session_repository.save(session)
         logger.debug("Session created: %s", session)
-        # if new_session.capacity * 0.9 <= self.session_repository.get_attendee_count(new_session.id):
-        #     send_capacity_notification.delay(new_session.event.organizer_email, new_session.name)
+        
 
     def get_session(self, session_id: str) -> SessionRead:
         return self.session_repository.find_by_id(session_id)

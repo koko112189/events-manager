@@ -10,7 +10,6 @@ class SessionCreate(SQLModel):
     start_time: datetime
     end_time: datetime
     event_id: Optional[int]
-    speaker_id: Optional[int]
 
     class Config:
         orm_mode = True
@@ -21,7 +20,6 @@ class SessionRead(SQLModel):
     capacity: int
     start_time: datetime
     end_time: datetime
-    speaker_id: Optional[int]
 
     class Config:
         orm_mode = True

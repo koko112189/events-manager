@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 from app.core.domain.events import  EventCreate, EventRead
 
 class EventRepository(ABC):

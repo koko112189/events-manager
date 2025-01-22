@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Type
 from annotated_types import T
 from sqlalchemy.orm import Session
@@ -36,3 +37,5 @@ class PostgresEventRepository(EventRepository):
             self.session.refresh(event_model)
             return EventRead(**event_model.dict())
         raise ValueError("Event not found")
+    
+    

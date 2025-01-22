@@ -22,17 +22,18 @@ class Session(SQLModel, table=True):
     date: datetime
     event_id: Optional[int] = Field(default=None, foreign_key="event.id")
     event: Optional[Event] = Relationship(back_populates="sessions")
-    speaker_id: Optional[int] = Field(default=None, foreign_key="speaker.id")
     speaker: Optional["Speaker"] = Relationship(back_populates="sessions")
-    resources: List["Resource"] = Relationship(back_populates="session")
+    resources: Optional["Resource"] = Relationship(back_populates="session")
+    attendees: Optional["Attendee"] = Relationship(back_populates="session")
 
     class Config:
         orm_mode = True
 
 class Speaker(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)  
-    person_id: Optional[int] = Field(default=None, foreign_key="person.id")
+    name: str
     bio: str
+    session_id: Optional[int] = Field(default=None, foreign_key="session.id")
     sessions: List[Session] = Relationship(back_populates="speaker")
 
     class Config:
@@ -52,19 +53,13 @@ class Resource(SQLModel, table=True):
 
 class Attendee(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)  
-    person_id: Optional[int] = Field(default=None, foreign_key="person.id")
-    event_id: Optional[int] = Field(default=None, foreign_key="event.id")
-    event: Optional[Event] = Relationship(back_populates="attendees")
-    sessions: List[Session] = Relationship(back_populates="attendees")
-    class Config:
-        orm_mode = True
-
-class Person(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)  
     name: str
     email: str
-    phone: str
-    registration_date: datetime
+    event_id: Optional[int] = Field(default=None, foreign_key="event.id")
+    event: Optional[Event] = Relationship(back_populates="attendees")
+    session_id: Optional[int] = Field(default=None, foreign_key="session.id")
+    session: Optional[Session] = Relationship(back_populates="attendees")
 
     class Config:
         orm_mode = True
+        
